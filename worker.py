@@ -22,3 +22,6 @@ class CheckTrhead(Thread):
                 self._newDirectories.append(item)
                 continue
             if self.isFileNew(item):
+                self.saveFile(item)
+            else:
+                print("File:", item, "already in collection")
