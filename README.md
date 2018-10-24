@@ -1,1 +1,5 @@
 # musicSyncher
+
+Need:
+
+python-magic

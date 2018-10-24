@@ -10,24 +10,37 @@ class CheckThread(Thread):
         self._pathToDatabase = pathToDatabase
         self._newDirectories = waitingQueue
 
-    def isFileNew(self, path):
-        # print("Not implemented")
+    @staticmethod
+    def isFileMusic(path):
+        import magic
+        mimeType = magic.from_file(path, mime=True)
+        if not mimeType.startswith("audio"):
+            # print(path, mimeType)
+            return False
         return True
+        # return mimeType.startswith("audio")
+
+    def isFileNew(self, path):
+        # print("is music:", path)
         raise NotImplementedError
 
     def saveFile(self, path):
-        # print("Not implemented")
-        return True
         raise NotImplementedError
 
     def run(self):
         print("Work in dir:", self._pathToFolder)
         itemsInFolder = os.listdir(self._pathToFolder)
         for item in itemsInFolder:
-            if os.path.isdir(os.path.join(self._pathToFolder, item)):
-                self._newDirectories.put(os.path.join(self._pathToFolder, item))
+            itemPath = os.path.join(self._pathToFolder, item)
+            if os.path.isdir(itemPath):
+                self._newDirectories.put(itemPath)
                 continue
-            if self.isFileNew(item):
-                self.saveFile(item)
+
+            if self.isFileMusic(itemPath):
+                continue
+
+            if self.isFileNew(itemPath):
+                self.saveFile(itemPath)
             else:
-                print("File:", item, "already in collection")
+                # pass
+                print("File:", itemPath, "already in collection")
